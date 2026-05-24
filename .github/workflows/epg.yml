@@ -40,12 +40,11 @@ jobs:
         run: |
           mkdir -p wg
 
-          wget -O wg.zip \
-          https://github.com/SilentButeo2/webgrabplus-package/archive/refs/heads/master.zip
+          wget -O wg.zip https://github.com/SilentButeo2/webgrabplus-package/archive/refs/heads/main.zip
 
           unzip -o wg.zip
 
-          cp -r webgrabplus-package-master/* wg/
+          cp -r webgrabplus-package-main/* wg/
 
       - name: Atualizar SiteIni Pack
         run: |
