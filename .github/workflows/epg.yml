@@ -25,16 +25,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Instalar Docker
+      - name: Instalar dependências
         run: |
           sudo apt update
-          sudo apt install -y docker.io gzip git
+          sudo apt install -y gzip git
 
       - name: Baixar SiteIni Pack
         run: |
           mkdir -p config/siteini.pack
 
-          git clone https://github.com/SilentButeo2/webgrabplus-siteinipack.git config/siteini.pack
+          git clone \
+          https://github.com/SilentButeo2/webgrabplus-siteinipack.git \
+          config/siteini.pack
 
       - name: Criar pasta output
         run: mkdir -p output
