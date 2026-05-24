@@ -31,33 +31,32 @@ jobs:
 
           sudo apt install -y \
             mono-complete \
-            unzip \
             wget \
+            unzip \
             curl \
-            gzip
+            gzip \
+            xvfb
 
       - name: Baixar WebGrab+Plus
         run: |
-          mkdir -p wg
+          wget -O webgrab.deb \
+          http://webgrabplus.com/sites/default/files/download/SW/V5.0.0/WebGrabPlus_V5.0_install_i386.deb
 
-          wget -O wg.zip https://github.com/SilentButeo2/webgrabplus-package/archive/refs/heads/main.zip
+          sudo dpkg -i webgrab.deb || true
 
-          unzip -o wg.zip
+          sudo apt-get install -f -y
 
-          cp -r webgrabplus-package-main/* wg/
-
-      - name: Atualizar SiteIni Pack
+      - name: Baixar SiteIni Pack
         run: |
           mkdir -p config/siteini.pack
 
-          wget -O siteini.pack.zip \
-          https://webgrabplus.com/sites/default/files/download/SiteIniPack_current.zip
-
-          unzip -o siteini.pack.zip -d config/siteini.pack
+          git clone \
+          https://github.com/SilentButeo2/webgrabplus-siteinipack.git \
+          config/siteini.pack
 
       - name: Executar WebGrab+Plus
         run: |
-          mono wg/bin/WebGrab+Plus.exe \
+          mono /usr/bin/WebGrab+Plus.exe \
           config/WebGrab++.config.xml
 
       - name: Compactar EPG
