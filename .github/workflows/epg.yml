@@ -28,6 +28,7 @@ jobs:
       - name: Instalar dependências
         run: |
           sudo apt update
+
           sudo apt install -y \
             mono-complete \
             unzip \
@@ -37,33 +38,36 @@ jobs:
 
       - name: Baixar WebGrab+Plus
         run: |
-          wget https://github.com/SilentButeo2/webgrabplus-package/releases/download/v5.1/WebGrabPlus_V5.1_install.tar.gz
-          
-          mkdir wg
-          
-          tar -xzf WebGrabPlus_V5.1_install.tar.gz -C wg
+          mkdir -p wg
 
-      - name: Baixar SiteIni Pack
+          wget -O wg.zip \
+          https://github.com/SilentButeo2/webgrabplus-package/archive/refs/heads/master.zip
+
+          unzip -o wg.zip
+
+          cp -r webgrabplus-package-master/* wg/
+
+      - name: Atualizar SiteIni Pack
         run: |
           mkdir -p config/siteini.pack
 
           wget -O siteini.pack.zip \
-            https://webgrabplus.com/sites/default/files/download/SiteIniPack_current.zip
+          https://webgrabplus.com/sites/default/files/download/SiteIniPack_current.zip
 
           unzip -o siteini.pack.zip -d config/siteini.pack
 
       - name: Executar WebGrab+Plus
         run: |
           mono wg/bin/WebGrab+Plus.exe \
-            config/WebGrab++.config.xml
+          config/WebGrab++.config.xml
 
       - name: Compactar EPG
         run: |
-          gzip -f guide.xml
-
           mkdir -p output
 
-          mv guide.xml.gz output/
+          gzip -f guide.xml
+
+          mv guide.xml.gz output/guide.xml.gz
 
       - name: Commit automático
         run: |
