@@ -22,33 +22,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repositório
         uses: actions/checkout@v4
 
-      - name: Instalar dependências
-        run: |
-          sudo apt update
-          sudo apt install -y gzip git
-
-      - name: Baixar SiteIni Pack
-        run: |
-          mkdir -p config/siteini.pack
-
-          git clone \
-          https://github.com/SilentButeo2/webgrabplus-siteinipack.git \
-          config/siteini.pack
-
       - name: Criar pasta output
-        run: mkdir -p output
+        run: |
+          mkdir -p output
 
-      - name: Executar WebGrab+Plus via Docker
+      - name: Executar WebGrab+Plus Docker
         run: |
           docker run --rm \
             -v ${{ github.workspace }}/config:/config \
             -v ${{ github.workspace }}:/data \
             ghcr.io/linuxserver/webgrabplus:latest
 
-      - name: Compactar XML
+      - name: Verificar XML
+        run: |
+          ls -lah
+          test -f guide.xml
+
+      - name: Compactar EPG
         run: |
           gzip -f guide.xml
 
@@ -61,6 +54,6 @@ jobs:
 
           git add output/guide.xml.gz
 
-          git commit -m "EPG atualizado automaticamente" || echo "Sem alterações"
+          git commit -m "Atualização automática EPG" || echo "Sem alterações"
 
           git push
