@@ -25,44 +25,29 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Instalar dependências
+      - name: Instalar Docker
         run: |
           sudo apt update
-
-          sudo apt install -y \
-            mono-complete \
-            wget \
-            unzip \
-            curl \
-            gzip \
-            xvfb
-
-      - name: Baixar WebGrab+Plus
-        run: |
-          wget -O webgrab.deb \
-          http://webgrabplus.com/sites/default/files/download/SW/V5.0.0/WebGrabPlus_V5.0_install_i386.deb
-
-          sudo dpkg -i webgrab.deb || true
-
-          sudo apt-get install -f -y
+          sudo apt install -y docker.io gzip git
 
       - name: Baixar SiteIni Pack
         run: |
           mkdir -p config/siteini.pack
 
-          git clone \
-          https://github.com/SilentButeo2/webgrabplus-siteinipack.git \
-          config/siteini.pack
+          git clone https://github.com/SilentButeo2/webgrabplus-siteinipack.git config/siteini.pack
 
-      - name: Executar WebGrab+Plus
+      - name: Criar pasta output
+        run: mkdir -p output
+
+      - name: Executar WebGrab+Plus via Docker
         run: |
-          mono /usr/bin/WebGrab+Plus.exe \
-          config/WebGrab++.config.xml
+          docker run --rm \
+            -v ${{ github.workspace }}/config:/config \
+            -v ${{ github.workspace }}:/data \
+            ghcr.io/linuxserver/webgrabplus:latest
 
-      - name: Compactar EPG
+      - name: Compactar XML
         run: |
-          mkdir -p output
-
           gzip -f guide.xml
 
           mv guide.xml.gz output/guide.xml.gz
@@ -74,6 +59,6 @@ jobs:
 
           git add output/guide.xml.gz
 
-          git commit -m "Atualização automática EPG" || echo "Sem alterações"
+          git commit -m "EPG atualizado automaticamente" || echo "Sem alterações"
 
           git push
